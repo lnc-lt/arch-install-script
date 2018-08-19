@@ -5,9 +5,6 @@ trap 's=$?; echo "$0: Error on line "$LINENO": $BASH_COMMAND"; exit $s' ERR
 
 REPO_URL="https://arch.lnc.lt/repo"
 
-mv /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.original
-rankmirrors -n 6 /etc/pacman.d/mirrorlist.original > /etc/pacman.d/mirrorlist
-
 hostname=$(dialog --stdout --inputbox "Please enter hostname:" 0 0) || exit 1
 clear
 : ${hostname:?"Hostname cannot be empty."}
