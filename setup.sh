@@ -66,6 +66,9 @@ SigLevel = Optional TrustAll
 Server = $REPO_URL
 EOF
 
+# Update sources
+sudo pacman -Sy
+
 pacstrap /mnt base base-devel lnclt-base lnclt-desktop lnclt-devel
 genfstab -t PARTUUID /mnt >> /mnt/etc/fstab
 echo "${hostname}" > /mnt/etc/hostname
