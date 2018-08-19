@@ -5,25 +5,23 @@ trap 's=$?; echo "$0: Error on line "$LINENO": $BASH_COMMAND"; exit $s' ERR
 
 REPO_URL="https://arch.lnc.lt/repo"
 
-echo "Updating mirror list"
 mv /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.original
 rankmirrors -n 6 /etc/pacman.d/mirrorlist.original > /etc/pacman.d/mirrorlist
 
-### Get infomation from user ###
-hostname=$(dialog --stdout --inputbox "Enter hostname" 0 0) || exit 1
+hostname=$(dialog --stdout --inputbox "Please enter hostname:" 0 0) || exit 1
 clear
-: ${hostname:?"hostname cannot be empty"}
+: ${hostname:?"Hostname cannot be empty."}
 
-user=$(dialog --stdout --inputbox "Enter admin username" 0 0) || exit 1
+user=$(dialog --stdout --inputbox "Please enter admin username:" 0 0) || exit 1
 clear
-: ${user:?"user cannot be empty"}
+: ${user:?"Admin username cannot be empty."}
 
-password=$(dialog --stdout --passwordbox "Enter admin password" 0 0) || exit 1
+password=$(dialog --stdout --passwordbox "Please enter admin password" 0 0) || exit 1
 clear
-: ${password:?"password cannot be empty"}
-password2=$(dialog --stdout --passwordbox "Enter admin password again" 0 0) || exit 1
+: ${password:?"Admin password cannot be empty."}
+password2=$(dialog --stdout --passwordbox "Please enter admin password again" 0 0) || exit 1
 clear
-[[ "$password" == "$password2" ]] || ( echo "Passwords did not match"; exit 1; )
+[[ "$password" == "$password2" ]] || ( echo "Sorry, the passwords did not match"; exit 1; )
 
 devicelist=$(lsblk -dplnx size -o name,size | grep -Ev "boot|rpmb|loop" | tac)
 device=$(dialog --stdout --menu "Select installtion disk" 0 0 0 ${devicelist}) || exit 1
@@ -45,7 +43,7 @@ parted --script "${device}" -- mklabel gpt \
   mkpart primary linux-swap 129MiB ${swap_end} \
   mkpart primary ext4 ${swap_end} 100%
 
-# Simple globbing was not enough as on one device I needed to match /dev/mmcblk0p1 
+# Simple globbing was not enough as on one device I needed to match /dev/mmcblk0p1
 # but not /dev/mmcblk0boot1 while being able to match /dev/sda1 on other devices.
 part_boot="$(ls ${device}* | grep -E "^${device}p?1$")"
 part_swap="$(ls ${device}* | grep -E "^${device}p?2$")"
